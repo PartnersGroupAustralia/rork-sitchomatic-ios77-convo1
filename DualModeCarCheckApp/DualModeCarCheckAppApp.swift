@@ -42,6 +42,8 @@ struct DualModeCarCheckAppApp: App {
                             .preferredColorScheme(.dark)
                         case .nordConfig:
                             NordLynxConfigView()
+                        case .splitTest:
+                            SplitTestView()
                         }
                     }
                     .transition(.asymmetric(
