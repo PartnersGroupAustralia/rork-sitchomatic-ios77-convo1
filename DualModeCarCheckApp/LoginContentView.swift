@@ -64,7 +64,7 @@ struct LoginContentView: View {
                 switch initialMode {
                 case .joe: vm.setSiteMode(.joe)
                 case .ignition: vm.setSiteMode(.ignition)
-                case .ppsr, .superTest, .debugLog, .flowRecorder, .nordConfig, .splitTest, .vault: break
+                case .ppsr, .superTest, .debugLog, .flowRecorder, .nordConfig, .splitTest, .vault, .ipScoreTest: break
                 default: break
                 }
             }

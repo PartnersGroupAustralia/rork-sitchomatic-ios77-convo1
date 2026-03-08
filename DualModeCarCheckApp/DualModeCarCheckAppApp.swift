@@ -50,6 +50,8 @@ struct DualModeCarCheckAppApp: App {
                             }
                             .withMainMenuButton()
                             .preferredColorScheme(.dark)
+                        case .ipScoreTest:
+                            IPScoreTestView()
                         }
                     }
                     .transition(.asymmetric(

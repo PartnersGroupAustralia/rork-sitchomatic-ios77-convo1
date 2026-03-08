@@ -22,19 +22,22 @@ struct MainMenuView: View {
                         joeZone(geo: geo)
                         ignitionZone(geo: geo)
                     }
-                    .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.38)
+                    .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.32)
 
                     splitTestZone(geo: geo)
-                        .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.14)
+                        .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.12)
 
                     HStack(spacing: 0) {
                         ppsrZone(geo: geo)
                         superTestZone(geo: geo)
                     }
-                    .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.28)
+                    .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.24)
 
-                    nordConfigZone(geo: geo)
-                        .frame(maxHeight: .infinity)
+                    HStack(spacing: 0) {
+                        nordConfigZone(geo: geo)
+                        ipScoreTestZone(geo: geo)
+                    }
+                    .frame(maxHeight: .infinity)
 
                     Spacer().frame(height: geo.safeAreaInsets.bottom + 4)
                 }
@@ -429,6 +432,57 @@ struct MainMenuView: View {
         .sensoryFeedback(.impact(weight: .heavy), trigger: activeMode == .splitTest)
     }
 
+    private func ipScoreTestZone(geo: GeometryProxy) -> some View {
+        Button {
+            withAnimation(.spring(duration: 0.4, bounce: 0.15)) {
+                activeMode = .ipScoreTest
+            }
+        } label: {
+            ZStack {
+                LinearGradient(
+                    colors: [.indigo.opacity(0.05), .cyan.opacity(0.2)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+
+                VStack(alignment: .trailing, spacing: 4) {
+                    Image(systemName: "network.badge.shield.half.filled")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(
+                            LinearGradient(colors: [.indigo, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
+                        .shadow(color: .indigo.opacity(0.5), radius: 8)
+
+                    Text("IP SCORE")
+                        .font(.system(size: 14, weight: .black, design: .monospaced))
+                        .foregroundStyle(.white)
+                        .shadow(color: .black.opacity(0.6), radius: 4)
+
+                    Text("8x Concurrent")
+                        .font(.system(size: 8, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(.indigo.opacity(0.7))
+
+                    HStack(spacing: 3) {
+                        Text("TEST")
+                            .font(.system(size: 8, weight: .heavy, design: .monospaced))
+                            .foregroundStyle(.indigo.opacity(0.6))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 7, weight: .heavy))
+                            .foregroundStyle(.indigo.opacity(0.4))
+                    }
+                    .padding(.top, 2)
+                }
+                .padding(.trailing, 20)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .opacity(animateIn ? 1 : 0)
+        .offset(x: animateIn ? 0 : 30)
+        .sensoryFeedback(.impact(weight: .medium), trigger: activeMode == .ipScoreTest)
+    }
+
     private func nordConfigZone(geo: GeometryProxy) -> some View {
         Button {
             withAnimation(.spring(duration: 0.4, bounce: 0.15)) {
@@ -502,4 +556,5 @@ nonisolated enum ActiveAppMode: String, Sendable {
     case nordConfig
     case splitTest
     case vault
+    case ipScoreTest
 }

@@ -935,6 +935,8 @@ struct SplitCredStatPill: View {
 struct SplitCredentialRow: View {
     let credential: LoginCredential
     let vm: LoginViewModel
+    private let nordService = NordVPNService.shared
+    private let proxyService = ProxyRotationService.shared
 
     var body: some View {
         HStack(spacing: 10) {
@@ -961,6 +963,7 @@ struct SplitCredentialRow: View {
                             .foregroundStyle(credential.lastTestSuccess == true ? .green : .red)
                     }
                 }
+                nordAssignmentLabel
             }
 
             Spacer()
@@ -978,6 +981,39 @@ struct SplitCredentialRow: View {
             }
         }
         .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
+    private var nordAssignmentLabel: some View {
+        let mode = proxyService.connectionMode(for: .joe)
+        if !nordService.recommendedServers.isEmpty {
+            let serverIndex = abs(credential.username.hashValue) % nordService.recommendedServers.count
+            let server = nordService.recommendedServers[serverIndex]
+            HStack(spacing: 4) {
+                Image(systemName: "shield.checkered")
+                    .font(.system(size: 8, weight: .bold))
+                Text("Nord: \(server.hostname.prefix(22))")
+                    .font(.system(size: 9, weight: .medium, design: .monospaced))
+                if let country = server.country {
+                    Text(country.prefix(6))
+                        .font(.system(size: 8, weight: .medium, design: .monospaced))
+                        .foregroundStyle(.indigo.opacity(0.5))
+                }
+            }
+            .foregroundStyle(.indigo.opacity(0.7))
+            .lineLimit(1)
+        } else if mode == .proxy && !proxyService.savedProxies.isEmpty {
+            let proxyIndex = abs(credential.username.hashValue) % proxyService.savedProxies.count
+            let proxy = proxyService.savedProxies[proxyIndex]
+            HStack(spacing: 4) {
+                Image(systemName: "network")
+                    .font(.system(size: 8, weight: .bold))
+                Text(proxy.displayString.prefix(28))
+                    .font(.system(size: 9, weight: .medium, design: .monospaced))
+            }
+            .foregroundStyle(.orange.opacity(0.7))
+            .lineLimit(1)
+        }
     }
 
     private var statusColor: Color {

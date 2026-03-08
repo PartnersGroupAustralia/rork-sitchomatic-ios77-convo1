@@ -16,6 +16,9 @@ class LoginAttempt: Identifiable {
     var responseSnapshot: UIImage?
     var responseSnippet: String?
     var detectedURL: String?
+    var assignedVPNServer: String?
+    var assignedVPNIP: String?
+    var assignedVPNCountry: String?
 
     init(credential: LoginCredential, sessionIndex: Int) {
         self.id = UUID()
