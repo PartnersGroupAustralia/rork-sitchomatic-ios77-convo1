@@ -43,7 +43,7 @@ struct DualModeCarCheckAppApp: App {
                         case .nordConfig:
                             NordLynxConfigView()
                         case .splitTest:
-                            SplitTestView()
+                            DualWebStackView()
                         }
                     }
                     .transition(.asymmetric(
