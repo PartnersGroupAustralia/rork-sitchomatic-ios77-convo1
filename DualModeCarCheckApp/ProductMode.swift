@@ -19,7 +19,7 @@ nonisolated enum ProductMode: String, CaseIterable, Sendable {
         switch self {
         case .ppsr: return "https://transact.ppsr.gov.au/CarCheck/"
         case .joe: return "https://joefortune24.com/login"
-        case .ignition: return "https://ignitioncasino.lat/login"
+        case .ignition: return "https://static.ignitioncasino.lat/?overlay=login"
         case .dual: return "https://joefortune24.com/login"
         }
     }

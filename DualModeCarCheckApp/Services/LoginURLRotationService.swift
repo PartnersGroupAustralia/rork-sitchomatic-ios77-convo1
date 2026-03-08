@@ -96,18 +96,18 @@ class LoginURLRotationService {
     }
 
     static let defaultIgnitionURLStrings: [String] = [
-        "https://ignitioncasino.lat/login",
-        "https://ignitioncasino.cool/login",
-        "https://ignitioncasino.fun/login",
-        "https://ignitioncasino.ooo/login",
-        "https://ignition231.com/login",
-        "https://ignition165.com/login",
-        "https://ignition551.com/login",
-        "https://ignitionpoker.eu/login",
-        "https://ignitionpoker.com/login",
-        "https://ignitioncasino.lv/login",
-        "https://ignitioncasino.eu/login",
-        "https://ignitioncasino.eu.com/login",
+        "https://static.ignitioncasino.lat/?overlay=login",
+        "https://static.ignitioncasino.cool/?overlay=login",
+        "https://static.ignitioncasino.fun/?overlay=login",
+        "https://static.ignitioncasino.ooo/?overlay=login",
+        "https://static.ignition231.com/?overlay=login",
+        "https://static.ignition165.com/?overlay=login",
+        "https://static.ignition551.com/?overlay=login",
+        "https://static.ignitionpoker.eu/?overlay=login",
+        "https://static.ignitionpoker.com/?overlay=login",
+        "https://static.ignitioncasino.lv/?overlay=login",
+        "https://static.ignitioncasino.eu/?overlay=login",
+        "https://static.ignitioncasino.eu.com/?overlay=login",
     ]
 
     var activeURLs: [RotatingURL] {
