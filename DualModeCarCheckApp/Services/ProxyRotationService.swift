@@ -71,6 +71,15 @@ class ProxyRotationService {
     var currentProxyIndex: Int = 0
     var currentIgnitionProxyIndex: Int = 0
     var currentPPSRProxyIndex: Int = 0
+
+    var currentJoeWGIndex: Int = 0
+    var currentIgnitionWGIndex: Int = 0
+    var currentPPSRWGIndex: Int = 0
+
+    var currentJoeOVPNIndex: Int = 0
+    var currentIgnitionOVPNIndex: Int = 0
+    var currentPPSROVPNIndex: Int = 0
+
     var rotateAfterDisabled: Bool = true
     var lastImportReport: ImportReport?
 
@@ -487,6 +496,124 @@ class ProxyRotationService {
         let proxy = working[currentPPSRProxyIndex]
         currentPPSRProxyIndex += 1
         return proxy
+    }
+
+    // MARK: - WireGuard Config Rotation
+
+    func nextEnabledWGConfig(for target: ProxyTarget) -> WireGuardConfig? {
+        let configs = wgConfigs(for: target).filter { $0.isEnabled }
+        guard !configs.isEmpty else { return nil }
+
+        switch target {
+        case .joe:
+            let idx = currentJoeWGIndex % configs.count
+            currentJoeWGIndex = idx + 1
+            return configs[idx]
+        case .ignition:
+            let idx = currentIgnitionWGIndex % configs.count
+            currentIgnitionWGIndex = idx + 1
+            return configs[idx]
+        case .ppsr:
+            let idx = currentPPSRWGIndex % configs.count
+            currentPPSRWGIndex = idx + 1
+            return configs[idx]
+        }
+    }
+
+    func nextReachableWGConfig(for target: ProxyTarget) -> WireGuardConfig? {
+        let reachable = wgConfigs(for: target).filter { $0.isEnabled && $0.isReachable }
+        if !reachable.isEmpty {
+            switch target {
+            case .joe:
+                let idx = currentJoeWGIndex % reachable.count
+                currentJoeWGIndex = idx + 1
+                return reachable[idx]
+            case .ignition:
+                let idx = currentIgnitionWGIndex % reachable.count
+                currentIgnitionWGIndex = idx + 1
+                return reachable[idx]
+            case .ppsr:
+                let idx = currentPPSRWGIndex % reachable.count
+                currentPPSRWGIndex = idx + 1
+                return reachable[idx]
+            }
+        }
+        return nextEnabledWGConfig(for: target)
+    }
+
+    // MARK: - OpenVPN Config Rotation
+
+    func nextEnabledOVPNConfig(for target: ProxyTarget) -> OpenVPNConfig? {
+        let configs = vpnConfigs(for: target).filter { $0.isEnabled }
+        guard !configs.isEmpty else { return nil }
+
+        switch target {
+        case .joe:
+            let idx = currentJoeOVPNIndex % configs.count
+            currentJoeOVPNIndex = idx + 1
+            return configs[idx]
+        case .ignition:
+            let idx = currentIgnitionOVPNIndex % configs.count
+            currentIgnitionOVPNIndex = idx + 1
+            return configs[idx]
+        case .ppsr:
+            let idx = currentPPSROVPNIndex % configs.count
+            currentPPSROVPNIndex = idx + 1
+            return configs[idx]
+        }
+    }
+
+    func nextReachableOVPNConfig(for target: ProxyTarget) -> OpenVPNConfig? {
+        let reachable = vpnConfigs(for: target).filter { $0.isEnabled && $0.isReachable }
+        if !reachable.isEmpty {
+            switch target {
+            case .joe:
+                let idx = currentJoeOVPNIndex % reachable.count
+                currentJoeOVPNIndex = idx + 1
+                return reachable[idx]
+            case .ignition:
+                let idx = currentIgnitionOVPNIndex % reachable.count
+                currentIgnitionOVPNIndex = idx + 1
+                return reachable[idx]
+            case .ppsr:
+                let idx = currentPPSROVPNIndex % reachable.count
+                currentPPSROVPNIndex = idx + 1
+                return reachable[idx]
+            }
+        }
+        return nextEnabledOVPNConfig(for: target)
+    }
+
+    func resetRotationIndexes() {
+        currentProxyIndex = 0
+        currentIgnitionProxyIndex = 0
+        currentPPSRProxyIndex = 0
+        currentJoeWGIndex = 0
+        currentIgnitionWGIndex = 0
+        currentPPSRWGIndex = 0
+        currentJoeOVPNIndex = 0
+        currentIgnitionOVPNIndex = 0
+        currentPPSROVPNIndex = 0
+    }
+
+    func networkSummary(for target: ProxyTarget) -> String {
+        let mode = connectionMode(for: target)
+        switch mode {
+        case .dns:
+            return "Direct (DNS)"
+        case .proxy:
+            let count = proxies(for: target).filter(\.isWorking).count
+            let total = proxies(for: target).count
+            return "SOCKS5 (\(count)/\(total) working)"
+        case .wireguard:
+            let enabled = wgConfigs(for: target).filter { $0.isEnabled }.count
+            let total = wgConfigs(for: target).count
+            return "WireGuard (\(enabled)/\(total) enabled)"
+        case .openvpn:
+            let enabled = vpnConfigs(for: target).filter { $0.isEnabled }.count
+            let total = vpnConfigs(for: target).count
+            return "OpenVPN (\(enabled)/\(total) enabled)"
+        }
     }
 
     func markProxyWorking(_ proxy: ProxyConfig) {

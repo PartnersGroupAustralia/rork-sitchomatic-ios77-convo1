@@ -20,10 +20,12 @@ class LoginAutomationEngine {
     var debugMode: Bool = false
     var stealthEnabled: Bool = false
     var automationSettings: AutomationSettings = AutomationSettings()
+    var proxyTarget: ProxyRotationService.ProxyTarget = .joe
     private let logger = DebugLogger.shared
     private let visionML = VisionMLService.shared
     private let debugButtonService = DebugLoginButtonService.shared
     private let trueDetection = TrueDetectionService.shared
+    private let networkFactory = NetworkSessionFactory.shared
     var onScreenshot: ((PPSRDebugScreenshot) -> Void)?
     var onPurgeScreenshots: (([String]) -> Void)?
     var onConnectionFailure: ((String) -> Void)?
@@ -48,7 +50,11 @@ class LoginAutomationEngine {
         logger.startSession(sessionId, category: .login, message: "Starting login test for \(attempt.credential.username) → \(targetURL.host ?? targetURL.absoluteString)")
         logger.log("Config: timeout=\(Int(timeout))s stealth=\(stealthEnabled) activeSessions=\(activeSessions)/\(maxConcurrency)", category: .login, level: .debug, sessionId: sessionId, metadata: ["url": targetURL.absoluteString, "username": attempt.credential.username])
 
-        let session = LoginSiteWebSession(targetURL: targetURL)
+        let netConfig = networkFactory.nextConfig(for: proxyTarget)
+        logger.log("Network config: \(netConfig.label) for target \(proxyTarget.rawValue)", category: .network, level: .info, sessionId: sessionId)
+        attempt.logs.append(PPSRLogEntry(message: "Network: \(netConfig.label)", level: .info))
+
+        let session = LoginSiteWebSession(targetURL: targetURL, networkConfig: netConfig)
         session.stealthEnabled = stealthEnabled
         session.onFingerprintLog = { [weak self] msg, level in
             attempt.logs.append(PPSRLogEntry(message: msg, level: level))
@@ -56,7 +62,7 @@ class LoginAutomationEngine {
             let debugLevel: DebugLogLevel = level == .error ? .error : level == .warning ? .warning : .trace
             self?.logger.log(msg, category: .fingerprint, level: debugLevel, sessionId: sessionId)
         }
-        logger.log("WebView session setUp (wipeAll: true)", category: .webView, level: .trace, sessionId: sessionId)
+        logger.log("WebView session setUp (wipeAll: true) network=\(netConfig.label)", category: .webView, level: .trace, sessionId: sessionId)
         session.setUp(wipeAll: true)
         defer {
             session.tearDown(wipeAll: true)

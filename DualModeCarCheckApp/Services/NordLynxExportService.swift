@@ -96,9 +96,6 @@ nonisolated struct NordLynxExportService: Sendable {
     }
 
     private var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: Date())
+        DateFormatters.mediumDateTime.string(from: Date())
     }
 }

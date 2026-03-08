@@ -47,12 +47,15 @@ class LoginSiteWebSession: NSObject {
     var lastNavigationError: String?
     var lastHTTPStatusCode: Int?
     var targetURL: URL
+    var networkConfig: ActiveNetworkConfig = .direct
     private var stealthProfile: PPSRStealthService.SessionProfile?
     private(set) var lastFingerprintScore: FingerprintValidationService.FingerprintScore?
     var onFingerprintLog: ((String, PPSRLogEntry.Level) -> Void)?
+    private let logger = DebugLogger.shared
 
-    init(targetURL: URL) {
+    init(targetURL: URL, networkConfig: ActiveNetworkConfig = .direct) {
         self.targetURL = targetURL
+        self.networkConfig = networkConfig
         super.init()
     }
 
@@ -73,6 +76,9 @@ class LoginSiteWebSession: NSObject {
         config.websiteDataStore = .nonPersistent()
         config.preferences.javaScriptCanOpenWindowsAutomatically = true
         config.defaultWebpagePreferences.allowsContentJavaScript = true
+
+        NetworkSessionFactory.shared.configureWKWebView(config: config, networkConfig: networkConfig)
+        logger.log("LoginSiteWebSession: setUp with network=\(networkConfig.label)", category: .network, level: .debug)
 
         if stealthEnabled {
             let stealth = PPSRStealthService.shared

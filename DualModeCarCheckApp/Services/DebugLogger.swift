@@ -573,9 +573,7 @@ class DebugLogger {
     }
 
     func exportDiagnosticReport(credentials: [LoginCredential] = [], automationSettings: AutomationSettings? = nil) -> String {
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-        let now = df.string(from: Date())
+        let now = DateFormatters.fullTimestamp.string(from: Date())
 
         var report = """
         ========================================

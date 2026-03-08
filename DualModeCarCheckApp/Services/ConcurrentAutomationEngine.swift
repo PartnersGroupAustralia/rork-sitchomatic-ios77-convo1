@@ -61,6 +61,7 @@ class ConcurrentAutomationEngine {
 
     private let logger = DebugLogger.shared
     private let coordinator = AIAutomationCoordinator.shared
+    private let networkFactory = NetworkSessionFactory.shared
     private let throttler = AutomationThrottler(maxConcurrency: 5)
     private(set) var isRunning: Bool = false
     private var cancelFlag: Bool = false
@@ -172,6 +173,7 @@ class ConcurrentAutomationEngine {
         engine: LoginAutomationEngine,
         maxConcurrency: Int = 5,
         timeout: TimeInterval = 45,
+        proxyTarget: ProxyRotationService.ProxyTarget = .joe,
         onProgress: @escaping (Int, Int, LoginOutcome) -> Void
     ) async -> ConcurrentBatchResult<(String, LoginOutcome)> {
         isRunning = true
@@ -180,7 +182,13 @@ class ConcurrentAutomationEngine {
         let batchId = "concurrent_login_\(UUID().uuidString.prefix(8))"
 
         await throttler.updateMaxConcurrency(maxConcurrency)
-        logger.startSession(batchId, category: .login, message: "ConcurrentEngine: starting \(attempts.count) login tests across \(urls.count) URLs")
+
+        let proxyService = ProxyRotationService.shared
+        let networkMode = proxyService.connectionMode(for: proxyTarget)
+        let networkSummary = proxyService.networkSummary(for: proxyTarget)
+        engine.proxyTarget = proxyTarget
+
+        logger.startSession(batchId, category: .login, message: "ConcurrentEngine: starting \(attempts.count) login tests across \(urls.count) URLs | network=\(networkSummary) mode=\(networkMode.label) target=\(proxyTarget.rawValue)")
 
         var allResults: [(String, LoginOutcome)] = []
         var successCount = 0
@@ -252,7 +260,7 @@ class ConcurrentAutomationEngine {
         let totalMs = Int(Date().timeIntervalSince(startTime) * 1000)
         let avgLatency = latencies.isEmpty ? 0 : latencies.reduce(0, +) / latencies.count
 
-        logger.endSession(batchId, category: .login, message: "ConcurrentEngine: login batch complete — \(successCount) success, \(failureCount) fail, avgLatency=\(avgLatency)ms")
+        logger.endSession(batchId, category: .login, message: "ConcurrentEngine: login batch complete — \(successCount) success, \(failureCount) fail, avgLatency=\(avgLatency)ms | network=\(networkSummary)")
 
         isRunning = false
         return ConcurrentBatchResult(
