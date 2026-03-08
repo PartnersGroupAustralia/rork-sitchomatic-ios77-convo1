@@ -196,7 +196,7 @@ struct SavedFlowsView: View {
         .padding(.vertical, 4)
         .sheet(isPresented: $showExportShare) {
             if let data = exportData {
-                ShareSheet(items: [data])
+                ShareSheet(activityItems: [data])
             }
         }
         .sheet(isPresented: $showEditingStudio) {
