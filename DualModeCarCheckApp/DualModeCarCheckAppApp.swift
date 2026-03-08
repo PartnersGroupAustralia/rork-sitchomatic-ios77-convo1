@@ -44,6 +44,12 @@ struct DualModeCarCheckAppApp: App {
                             NordLynxConfigView()
                         case .splitTest:
                             DualWebStackView()
+                        case .vault:
+                            NavigationStack {
+                                StorageFileBrowserView()
+                            }
+                            .withMainMenuButton()
+                            .preferredColorScheme(.dark)
                         }
                     }
                     .transition(.asymmetric(
@@ -67,6 +73,11 @@ struct DualModeCarCheckAppApp: App {
             .task {
                 if !nordInitialized {
                     nordInitialized = true
+                    let vault = PersistentFileStorageService.shared
+                    let didRestore = vault.restoreIfNeeded()
+                    if didRestore {
+                        DebugLogger.shared.log("App launched — restored state from vault", category: .persistence, level: .success)
+                    }
                     DefaultSettingsService.shared.applyDefaultsIfNeeded()
                     let nord = NordVPNService.shared
                     if !nord.hasAccessKey {
@@ -75,7 +86,14 @@ struct DualModeCarCheckAppApp: App {
                     if nord.isTokenExpired {
                         nord.lastError = "NordVPN access token needs to be refreshed before fetching a private key."
                     }
+                    vault.saveFullState()
                 }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                PersistentFileStorageService.shared.forceSave()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+                PersistentFileStorageService.shared.forceSave()
             }
         }
     }

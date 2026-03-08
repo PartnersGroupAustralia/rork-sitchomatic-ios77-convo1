@@ -89,6 +89,27 @@ struct MainMenuView: View {
 
                         Spacer()
 
+                        Button {
+                            withAnimation(.spring(duration: 0.4, bounce: 0.15)) {
+                                activeMode = .vault
+                            }
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "externaldrive.fill")
+                                    .font(.system(size: 9, weight: .semibold))
+                                Text("VAULT")
+                                    .font(.system(size: 8, weight: .heavy, design: .monospaced))
+                            }
+                            .foregroundStyle(.teal.opacity(0.6))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 12)
+                            .background(.teal.opacity(0.1))
+                            .clipShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+
+                        Spacer()
+
                         Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?")")
                             .font(.system(size: 9, weight: .medium, design: .monospaced))
                             .foregroundStyle(.white.opacity(0.15))
@@ -480,4 +501,5 @@ nonisolated enum ActiveAppMode: String, Sendable {
     case flowRecorder
     case nordConfig
     case splitTest
+    case vault
 }
