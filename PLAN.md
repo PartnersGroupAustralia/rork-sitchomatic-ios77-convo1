@@ -1,33 +1,21 @@
-# Clean up dead URLs, add joefortunepokies.win, fix NordVPN auto-fetch error
+# Full error check and targeted fixes
 
-## Issues Found & Fixes
+## URL rotation cleanup
+- [x] Remove dead Ignition URLs from the default rotation list
+- [x] Add `static.joefortunepokies.win/login` to the Joe Fortune rotation list
 
-### 🗑️ Remove Dead Ignition URLs
-The following URLs are returning 403, 404, or completely failing to load. They should be removed from the default rotation list:
+## NordVPN reliability
+- [x] Stop auto-calling `fetchPrivateKey()` on app launch
+- [x] Keep private-key fetching as an explicit user action from settings
+- [x] Surface expired-token state without launch-time API spam
 
-- **ignitioncasino.net** — dead, no content returned
-- **ignitionpoker.net** — dead, extremely slow, no content
-- **ignitioncasino.net.lv** — dead (tied to .net domain)
-- **ignitionpoker.net.lv** — dead (tied to .net domain)
-- **ignitioncasino.org.lv** — returning errors
-- **ignitioncasino.ltd** — returning errors
-- **ignitioncasino.buzz** — returning errors
-- **ignitioncasino.com** — loads a marketing/welcome page, NOT a login page — useless for login automation
+## Calibration cleanup
+- [x] Auto-prune stale calibration entries that no longer match the active URL rotation list
 
-### ➕ Add New Working URL
-- **joefortunepokies.win/login** — confirmed working with login fields, will be added to the Joe Fortune URL rotation list (via `static.joefortunepokies.win/login`)
+## App Shortcuts / Spotlight hardening
+- [x] Fix `AppShortcutsProvider` to use `@AppShortcutsBuilder`
+- [x] Add the missing Ignition shortcut entry
+- [x] Make App Intent types concurrency-safe under default `MainActor` isolation
 
-### 🔧 Fix NordVPN Auto-Fetch Error Spam
-- Stop automatically calling `fetchPrivateKey()` on app launch — it fails with 401 every time (expired token) and pollutes the error log
-- Only attempt the fetch when the user explicitly taps the button, or when a valid (non-expired) token is confirmed
-- Add a check: if the token was previously marked as expired, skip the auto-fetch
-
-### 🧹 Clean Up Stale Calibration Data
-- Calibration entries with 0 successes AND 0 failures (50% default confidence) for domains that no longer exist will be auto-pruned
-- Add a cleanup pass that removes calibration data for domains not in the current URL rotation list
-
-### Summary
-- **8 dead Ignition URLs removed** from defaults
-- **1 new Joe Fortune URL added** (joefortunepokies.win)
-- **NordVPN error spam fixed** on app launch
-- **Stale calibrations cleaned up** automatically
+## Verification
+- [ ] Re-run a full cloud Swift build when build tooling is available in this environment

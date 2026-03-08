@@ -70,8 +70,8 @@ struct DualModeCarCheckAppApp: App {
                     if !nord.hasAccessKey {
                         nord.setAccessKey(NordVPNKeyStore.defaultNickKey)
                     }
-                    if nord.hasAccessKey && !nord.hasPrivateKey && !nord.isTokenExpired {
-                        await nord.fetchPrivateKey()
+                    if nord.isTokenExpired {
+                        nord.lastError = "NordVPN access token needs to be refreshed before fetching a private key."
                     }
                 }
             }

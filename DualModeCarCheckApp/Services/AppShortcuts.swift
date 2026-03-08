@@ -1,78 +1,74 @@
 import AppIntents
 import SwiftUI
 
-struct CheckStatsIntent: AppIntent {
+nonisolated struct CheckStatsIntent: AppIntent {
     static var title: LocalizedStringResource = "Check Stats"
     static var description: IntentDescription = "View current card and credential statistics"
     static var openAppWhenRun: Bool = true
 
+    @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let stats = await MainActor.run {
-            StatsTrackingService.shared
-        }
-        let tested = await MainActor.run { stats.lifetimeTested }
-        let working = await MainActor.run { stats.lifetimeWorking }
-        let dead = await MainActor.run { stats.lifetimeDead }
-        let rate = await MainActor.run { stats.lifetimeSuccessRate }
+        let stats = StatsTrackingService.shared
+        let tested = stats.lifetimeTested
+        let working = stats.lifetimeWorking
+        let dead = stats.lifetimeDead
+        let rate = stats.lifetimeSuccessRate
 
         let message = "Lifetime: \(tested) tested, \(working) working, \(dead) dead. Success rate: \(String(format: "%.0f%%", rate * 100))."
         return .result(dialog: "\(message)")
     }
 }
 
-struct OpenPPSRModeIntent: AppIntent {
+nonisolated struct OpenPPSRModeIntent: AppIntent {
     static var title: LocalizedStringResource = "Open PPSR Mode"
     static var description: IntentDescription = "Open the PPSR card testing mode"
     static var openAppWhenRun: Bool = true
 
+    @MainActor
     func perform() async throws -> some IntentResult {
-        await MainActor.run {
-            UserDefaults.standard.set("ppsr", forKey: "activeAppMode")
-        }
+        UserDefaults.standard.set("ppsr", forKey: "activeAppMode")
         return .result()
     }
 }
 
-struct OpenJoeModeIntent: AppIntent {
+nonisolated struct OpenJoeModeIntent: AppIntent {
     static var title: LocalizedStringResource = "Open Joe Mode"
     static var description: IntentDescription = "Open the Joe Fortune login testing mode"
     static var openAppWhenRun: Bool = true
 
+    @MainActor
     func perform() async throws -> some IntentResult {
-        await MainActor.run {
-            UserDefaults.standard.set("joe", forKey: "activeAppMode")
-        }
+        UserDefaults.standard.set("joe", forKey: "activeAppMode")
         return .result()
     }
 }
 
-struct OpenIgnitionModeIntent: AppIntent {
+nonisolated struct OpenIgnitionModeIntent: AppIntent {
     static var title: LocalizedStringResource = "Open Ignition Mode"
     static var description: IntentDescription = "Open the Ignition Casino login testing mode"
     static var openAppWhenRun: Bool = true
 
+    @MainActor
     func perform() async throws -> some IntentResult {
-        await MainActor.run {
-            UserDefaults.standard.set("ignition", forKey: "activeAppMode")
-        }
+        UserDefaults.standard.set("ignition", forKey: "activeAppMode")
         return .result()
     }
 }
 
-struct OpenNordConfigIntent: AppIntent {
+nonisolated struct OpenNordConfigIntent: AppIntent {
     static var title: LocalizedStringResource = "Open NordLynx Config"
     static var description: IntentDescription = "Open the NordLynx VPN config generator"
     static var openAppWhenRun: Bool = true
 
+    @MainActor
     func perform() async throws -> some IntentResult {
-        await MainActor.run {
-            UserDefaults.standard.set("nordConfig", forKey: "activeAppMode")
-        }
+        UserDefaults.standard.set("nordConfig", forKey: "activeAppMode")
         return .result()
     }
 }
 
-struct DualModeAppShortcuts: AppShortcutsProvider {
+nonisolated struct DualModeAppShortcuts: AppShortcutsProvider {
+    @AppShortcutsBuilder
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: CheckStatsIntent(),
@@ -99,6 +95,14 @@ struct DualModeAppShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "Open Joe",
             systemImageName: "flame.fill"
+        )
+        AppShortcut(
+            intent: OpenIgnitionModeIntent(),
+            phrases: [
+                "Open Ignition mode in \(.applicationName)"
+            ],
+            shortTitle: "Open Ignition",
+            systemImageName: "flame.circle.fill"
         )
         AppShortcut(
             intent: OpenNordConfigIntent(),
