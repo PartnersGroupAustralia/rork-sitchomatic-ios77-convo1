@@ -31,4 +31,10 @@ nonisolated enum DateFormatters: Sendable {
         f.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return f
     }()
+
+    static let fileStamp: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd_HHmm"
+        return f
+    }()
 }

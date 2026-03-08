@@ -32,7 +32,7 @@ class PPSRAutomationViewModel {
     var activeTestCount: Int = 0
     var debugMode: Bool = false
     var debugScreenshots: [PPSRDebugScreenshot] = []
-    var appearanceMode: AppearanceMode = .dark
+    var appearanceMode: AppAppearanceMode = .dark
     var useEmailRotation: Bool = false
     var stealthEnabled: Bool = true
     var retrySubmitOnFail: Bool = false
@@ -64,27 +64,6 @@ class PPSRAutomationViewModel {
     var fingerprintHistory: [FingerprintValidationService.FingerprintScore] { FingerprintValidationService.shared.scoreHistory }
     var lastFingerprintScore: FingerprintValidationService.FingerprintScore? { FingerprintValidationService.shared.lastScore }
 
-    nonisolated enum AppearanceMode: String, CaseIterable, Sendable {
-        case system = "System"
-        case light = "Light"
-        case dark = "Dark"
-
-        var colorScheme: ColorScheme? {
-            switch self {
-            case .system: nil
-            case .light: .light
-            case .dark: .dark
-            }
-        }
-
-        var icon: String {
-            switch self {
-            case .system: "circle.lefthalf.filled"
-            case .light: "sun.max.fill"
-            case .dark: "moon.fill"
-            }
-        }
-    }
 
     nonisolated enum ConnectionStatus: String, Sendable {
         case disconnected = "Disconnected"
@@ -163,7 +142,7 @@ class PPSRAutomationViewModel {
             testEmail = settings.email
             maxConcurrency = settings.maxConcurrency
             debugMode = settings.debugMode
-            if let mode = AppearanceMode(rawValue: settings.appearanceMode) {
+            if let mode = AppAppearanceMode(rawValue: settings.appearanceMode) {
                 appearanceMode = mode
             }
             useEmailRotation = settings.useEmailRotation

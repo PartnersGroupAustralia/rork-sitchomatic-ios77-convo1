@@ -1,14 +1,13 @@
 import Foundation
 
-@MainActor
-class FailureNotice: Identifiable {
+nonisolated struct FailureNotice: Identifiable, Sendable {
     let id: String
     let message: String
     let source: Source
     let timestamp: Date
     var autoRetried: Bool
 
-    nonisolated enum Source: String, Sendable, Codable {
+    enum Source: String, Sendable, Codable {
         case ppsr = "PPSR"
         case login = "Login"
     }
@@ -22,8 +21,6 @@ class FailureNotice: Identifiable {
     }
 
     var formattedTime: String {
-        let f = DateFormatter()
-        f.dateFormat = "HH:mm:ss"
-        return f.string(from: timestamp)
+        DateFormatters.timeOnly.string(from: timestamp)
     }
 }

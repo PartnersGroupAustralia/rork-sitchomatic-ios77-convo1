@@ -51,8 +51,8 @@ struct MainMenuView: View {
                                     .font(.system(size: 9, weight: .heavy, design: .monospaced))
                             }
                             .foregroundStyle(.red.opacity(0.8))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 7)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
                             .background(.red.opacity(0.15))
                             .clipShape(Capsule())
                         }
@@ -76,8 +76,8 @@ struct MainMenuView: View {
                                     .font(.system(size: 8, weight: .heavy, design: .monospaced))
                             }
                             .foregroundStyle(.white.opacity(0.35))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 12)
                             .background(.white.opacity(0.06))
                             .clipShape(Capsule())
                         }
@@ -86,7 +86,7 @@ struct MainMenuView: View {
 
                         Spacer()
 
-                        Text("v10.1")
+                        Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?")")
                             .font(.system(size: 9, weight: .medium, design: .monospaced))
                             .foregroundStyle(.white.opacity(0.15))
                             .padding(.trailing, 16)

@@ -1,21 +1,39 @@
-# Full error check and targeted fixes
+# Code Quality Tweaks: 10 Improvements (Skip Hashable)
 
-## URL rotation cleanup
-- [x] Remove dead Ignition URLs from the default rotation list
-- [x] Add `static.joefortunepokies.win/login` to the Joe Fortune rotation list
+Implementing all recommended tweaks except #7:
 
-## NordVPN reliability
-- [x] Stop auto-calling `fetchPrivateKey()` on app launch
-- [x] Keep private-key fetching as an explicit user action from settings
-- [x] Surface expired-token state without launch-time API spam
+### 🔴 Fixes
 
-## Calibration cleanup
-- [x] Auto-prune stale calibration entries that no longer match the active URL rotation list
+**1. Reuse DateFormatters instead of creating new ones**
+- Replace inline `DateFormatter()` calls in FailureNotice, LoginWorkingListView, WorkingLoginsView, CredentialExportView, and ConsolidatedImportExportView with existing shared formatters
 
-## App Shortcuts / Spotlight hardening
-- [x] Fix `AppShortcutsProvider` to use `@AppShortcutsBuilder`
-- [x] Add the missing Ignition shortcut entry
-- [x] Make App Intent types concurrency-safe under default `MainActor` isolation
+**2. Add note about hardcoded VPN keys**
+- Mark the default WireGuard keys in DefaultSettingsService as placeholder/example values with a clear comment
 
-## Verification
-- [ ] Re-run a full cloud Swift build when build tooling is available in this environment
+**3. Make NoticesService observable**
+- Convert NoticesService to use `@Observable` so the notices list updates in real-time in the UI
+
+**4. Dynamic version string**
+- Replace hardcoded "v10.1" in MainMenuView with the app's actual marketing version pulled from the bundle
+
+### 🟡 Quality Tweaks
+
+**5. Convert FailureNotice from class to struct**
+- Change to a lightweight `nonisolated struct` with `Sendable` conformance
+
+**6. Consolidate duplicate AppearanceMode enum**
+- Remove the duplicate enum in PPSRAutomationViewModel and use the shared `AppAppearanceMode` from SharedTypes
+
+**8. Increase touch targets on small menu buttons**
+- Add more padding to "RECORD FLOW" and "DEBUG LOG" buttons to meet the 44pt minimum
+
+### 🟢 Polish
+
+**9. Add haptic feedback to Clear Notices**
+- Add sensory feedback when the user taps the destructive "Clear Notices" button
+
+**10. Use EmptyStateView in NoticesView**
+- Replace the inline empty state with the reusable EmptyStateView component for visual consistency
+
+**11. Add pull-to-refresh on Login Dashboard**
+- Add `.refreshable` to LoginDashboardContentView to match the PPSR dashboard experience

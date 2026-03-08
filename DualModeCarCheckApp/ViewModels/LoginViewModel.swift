@@ -19,7 +19,7 @@ class LoginViewModel {
     var debugMode: Bool = false
     var stealthEnabled: Bool = true
     var targetSite: LoginTargetSite = .joefortune
-    var appearanceMode: AppearanceMode = .dark
+    var appearanceMode: AppAppearanceMode = .dark
     var testTimeout: TimeInterval = 45
     var showBatchResultPopup: Bool = false
     var lastBatchResult: BatchResult?
@@ -80,27 +80,6 @@ class LoginViewModel {
         return appearanceMode.colorScheme
     }
 
-    nonisolated enum AppearanceMode: String, CaseIterable, Sendable {
-        case system = "System"
-        case light = "Light"
-        case dark = "Dark"
-
-        var colorScheme: ColorScheme? {
-            switch self {
-            case .system: nil
-            case .light: .light
-            case .dark: .dark
-            }
-        }
-
-        var icon: String {
-            switch self {
-            case .system: "circle.lefthalf.filled"
-            case .light: "sun.max.fill"
-            case .dark: "moon.fill"
-            }
-        }
-    }
 
     nonisolated enum ConnectionStatus: String, Sendable {
         case disconnected = "Disconnected"
@@ -208,7 +187,7 @@ class LoginViewModel {
             }
             maxConcurrency = settings.maxConcurrency
             debugMode = settings.debugMode
-            if let mode = AppearanceMode(rawValue: settings.appearanceMode) {
+            if let mode = AppAppearanceMode(rawValue: settings.appearanceMode) {
                 appearanceMode = mode
             }
             stealthEnabled = settings.stealthEnabled

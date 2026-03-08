@@ -211,9 +211,7 @@ struct WorkingLoginsView: View {
     }
 
     private func dateStamp() -> String {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd_HHmm"
-        return f.string(from: Date())
+        DateFormatters.fileStamp.string(from: Date())
     }
 }
 

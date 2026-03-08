@@ -1,5 +1,7 @@
 import Foundation
+import Observation
 
+@Observable
 @MainActor
 class NoticesService {
     static let shared = NoticesService()

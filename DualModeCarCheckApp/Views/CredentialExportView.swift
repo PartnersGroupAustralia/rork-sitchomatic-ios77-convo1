@@ -139,9 +139,7 @@ struct CredentialExportView: View {
     }
 
     private func filename() -> String {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd_HHmm"
-        let date = f.string(from: Date())
+        let date = DateFormatters.fileStamp.string(from: Date())
         let ext = exportFormat == .csv ? "csv" : "txt"
         return "\(selectedFilter.rawValue.lowercased().replacingOccurrences(of: " ", with: "_"))_creds_\(date).\(ext)"
     }

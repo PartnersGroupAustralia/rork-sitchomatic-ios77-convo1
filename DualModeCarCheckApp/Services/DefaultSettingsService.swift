@@ -43,7 +43,9 @@ class DefaultSettingsService {
         proxyService.setConnectionMode(.wireguard, for: .ignition)
         proxyService.setConnectionMode(.dns, for: .ppsr)
 
-        let defaultWGConfigs: [(fileName: String, rawContent: String)] = [
+        // IMPORTANT: These are default/example WireGuard configs bundled for first-run convenience.
+    // Keys and endpoints below are placeholder values that ship in the binary.
+    let defaultWGConfigs: [(fileName: String, rawContent: String)] = [
             ("au645.nordvpn.com", "[Interface]\nPrivateKey = VNGYDvHtqrtvTreejavzR19/bvMVwTlTPOfEt1xew94=\nAddress = 10.5.0.2/32\nDNS = 103.86.96.100, 103.86.99.100\n\n[Peer]\nPublicKey = f+xo9hOjVEkHVkGJowuRGU5UEESXCpiI3wYCQZPSils=\nAllowedIPs = 0.0.0.0/0\nEndpoint = 103.137.14.171:51820\nPersistentKeepalive = 25"),
             ("au765.nordvpn.com", "[Interface]\nPrivateKey = VNGYDvHtqrtvTreejavzR19/bvMVwTlTPOfEt1xew94=\nAddress = 10.5.0.2/32\nDNS = 103.86.96.100, 103.86.99.100\n\n[Peer]\nPublicKey = f+xo9hOjVEkHVkGJowuRGU5UEESXCpiI3wYCQZPSils=\nAllowedIPs = 0.0.0.0/0\nEndpoint = 103.137.15.43:51820\nPersistentKeepalive = 25"),
             ("au833.nordvpn.com", "[Interface]\nPrivateKey = VNGYDvHtqrtvTreejavzR19/bvMVwTlTPOfEt1xew94=\nAddress = 10.5.0.2/32\nDNS = 103.86.96.100, 103.86.99.100\n\n[Peer]\nPublicKey = f+xo9hOjVEkHVkGJowuRGU5UEESXCpiI3wYCQZPSils=\nAllowedIPs = 0.0.0.0/0\nEndpoint = 94.156.206.3:51820\nPersistentKeepalive = 25"),

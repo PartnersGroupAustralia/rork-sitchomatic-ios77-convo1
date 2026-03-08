@@ -43,6 +43,9 @@ struct LoginDashboardContentView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Dashboard")
+        .refreshable {
+            await vm.testConnection()
+        }
         .task {
             await vm.testConnection()
         }

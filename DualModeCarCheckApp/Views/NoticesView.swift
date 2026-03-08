@@ -3,6 +3,7 @@ import SwiftUI
 struct NoticesView: View {
     let noticesService = NoticesService.shared
     @State private var filterSource: FailureNotice.Source?
+    @State private var clearTrigger: Bool = false
 
     var filteredNotices: [FailureNotice] {
         if let source = filterSource {
@@ -14,22 +15,13 @@ struct NoticesView: View {
     var body: some View {
         List {
             if filteredNotices.isEmpty {
-                Section {
-                    VStack(spacing: 12) {
-                        Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 36))
-                            .foregroundStyle(.green.opacity(0.6))
-                        Text("No Failure Notices")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                        Text("Unusual failures and auto-retries will appear here instead of interrupting your workflow.")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 24)
-                }
+                EmptyStateView(
+                    icon: "checkmark.seal.fill",
+                    title: "No Failure Notices",
+                    subtitle: "Unusual failures and auto-retries will appear here instead of interrupting your workflow.",
+                    accentColor: .green
+                )
+                .listRowBackground(Color.clear)
             } else {
                 Section {
                     Picker("Filter", selection: $filterSource) {
@@ -89,9 +81,11 @@ struct NoticesView: View {
                         } else {
                             noticesService.clearNotices()
                         }
+                        clearTrigger.toggle()
                     } label: {
                         Label("Clear \(filterSource?.rawValue ?? "All") Notices", systemImage: "trash")
                     }
+                    .sensoryFeedback(.impact(weight: .medium), trigger: clearTrigger)
                 }
             }
         }

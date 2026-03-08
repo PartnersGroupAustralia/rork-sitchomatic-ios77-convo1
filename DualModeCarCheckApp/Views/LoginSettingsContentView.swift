@@ -256,7 +256,7 @@ struct LoginSettingsContentView: View {
     private var appearanceSection: some View {
         Section {
             Picker(selection: $vm.appearanceMode) {
-                ForEach(LoginViewModel.AppearanceMode.allCases, id: \.self) { mode in
+                ForEach(AppAppearanceMode.allCases, id: \.self) { mode in
                     Label(mode.rawValue, systemImage: mode.icon).tag(mode)
                 }
             } label: {
