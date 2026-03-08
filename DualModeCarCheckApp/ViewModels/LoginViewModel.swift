@@ -562,6 +562,10 @@ class LoginViewModel {
     private func configureEngine() {
         engine.debugMode = debugMode
         engine.stealthEnabled = stealthEnabled
+        engine.automationSettings = automationSettings
+        secondaryEngine.debugMode = debugMode
+        secondaryEngine.stealthEnabled = stealthEnabled
+        secondaryEngine.automationSettings = automationSettings
     }
 
     private func handleOutcome(_ outcome: LoginOutcome, credential: LoginCredential, attempt: LoginAttempt) {
@@ -715,8 +719,6 @@ class LoginViewModel {
 
         batchTask = Task {
             configureEngine()
-            secondaryEngine.debugMode = debugMode
-            secondaryEngine.stealthEnabled = stealthEnabled
 
             await withTaskGroup(of: Void.self) { group in
                 var running = 0

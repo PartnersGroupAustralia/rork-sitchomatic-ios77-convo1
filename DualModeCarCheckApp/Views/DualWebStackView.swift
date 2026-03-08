@@ -31,6 +31,7 @@ struct DualWebStackView: View {
     @State private var showBulkImport: Bool = false
     @State private var bulkImportResult: String? = nil
     @State private var showLogSheet: Bool = false
+    @State private var showAutomationSettings: Bool = false
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -66,6 +67,20 @@ struct DualWebStackView: View {
         }
         .sheet(isPresented: $showLogSheet) {
             splitLogSheet
+        }
+        .sheet(isPresented: $showAutomationSettings) {
+            NavigationStack {
+                AutomationSettingsView(vm: vm)
+                    .navigationTitle("Automation Settings")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button("Done") { showAutomationSettings = false }
+                        }
+                    }
+            }
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
         }
         .withBatchAlerts(
             showBatchResult: $vm.showBatchResultPopup,
@@ -169,6 +184,8 @@ struct DualWebStackView: View {
             SplitWebViewRepresentable(
                 url: url,
                 processPool: processPool,
+                stealthEnabled: vm.stealthEnabled,
+                automationSettings: vm.automationSettings,
                 isLoading: isLoading,
                 pageTitle: pageTitle,
                 currentURL: currentURL,
@@ -275,6 +292,8 @@ struct DualWebStackView: View {
 
             splitCredentialBadges
 
+            splitStealthBadge
+
             HStack(spacing: 4) {
                 Circle()
                     .fill(topIsLoading ? .yellow : .green)
@@ -283,6 +302,23 @@ struct DualWebStackView: View {
                     .fill(bottomIsLoading ? .yellow : .orange)
                     .frame(width: 6, height: 6)
             }
+
+            Button {
+                showAutomationSettings = true
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 10, weight: .bold))
+                    Text(vm.automationSettings.trueDetectionEnabled ? "TD" : "STD")
+                        .font(.system(size: 8, weight: .heavy, design: .monospaced))
+                }
+                .foregroundStyle(.purple.opacity(0.9))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 7)
+                .background(.purple.opacity(0.12))
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
 
             Button {
                 reloadBoth()
@@ -849,8 +885,26 @@ struct DualWebStackView: View {
 
     private func reloadBoth() {
         reloadTrigger += 1
-        topWebView?.reload()
-        bottomWebView?.reload()
+    }
+
+    private var splitStealthBadge: some View {
+        HStack(spacing: 4) {
+            Image(systemName: vm.stealthEnabled ? "shield.checkered" : "shield.slash")
+                .font(.system(size: 9, weight: .bold))
+            if vm.automationSettings.trueDetectionEnabled {
+                Text("TRUE")
+                    .font(.system(size: 7, weight: .heavy, design: .monospaced))
+            }
+            if vm.automationSettings.fingerprintSpoofing {
+                Image(systemName: "fingerprint")
+                    .font(.system(size: 8, weight: .bold))
+            }
+        }
+        .foregroundStyle(vm.stealthEnabled ? .green.opacity(0.8) : .red.opacity(0.6))
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(vm.stealthEnabled ? .green.opacity(0.08) : .red.opacity(0.06))
+        .clipShape(Capsule())
     }
 }
 
