@@ -24,14 +24,17 @@ struct MainMenuView: View {
                     }
                     .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.32)
 
-                    splitTestZone(geo: geo)
-                        .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.12)
+                    HStack(spacing: 0) {
+                        splitTestZone(geo: geo)
+                        dualFindZone(geo: geo)
+                    }
+                    .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.14)
 
                     HStack(spacing: 0) {
                         ppsrZone(geo: geo)
                         superTestZone(geo: geo)
                     }
-                    .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.24)
+                    .frame(height: (geo.size.height - geo.safeAreaInsets.top - geo.safeAreaInsets.bottom) * 0.22)
 
                     HStack(spacing: 0) {
                         nordConfigZone(geo: geo)
@@ -544,6 +547,62 @@ struct MainMenuView: View {
         .offset(y: animateIn ? 0 : 30)
         .sensoryFeedback(.impact(weight: .medium), trigger: activeMode == .nordConfig)
     }
+
+    private func dualFindZone(geo: GeometryProxy) -> some View {
+        Button {
+            withAnimation(.spring(duration: 0.4, bounce: 0.15)) {
+                activeMode = .dualFind
+            }
+        } label: {
+            ZStack {
+                LinearGradient(
+                    colors: [.purple.opacity(0.15), .indigo.opacity(0.2)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+
+                HStack(spacing: 0) {
+                    Spacer()
+
+                    VStack(alignment: .trailing, spacing: 4) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(.purple)
+                            Image(systemName: "person.2.fill")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(.indigo)
+                        }
+                        .shadow(color: .purple.opacity(0.5), radius: 8)
+
+                        Text("DUAL FIND")
+                            .font(.system(size: 14, weight: .black, design: .monospaced))
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.6), radius: 4)
+
+                        Text("Email × 3 Passwords")
+                            .font(.system(size: 8, weight: .semibold, design: .monospaced))
+                            .foregroundStyle(.purple.opacity(0.7))
+
+                        HStack(spacing: 3) {
+                            Text("FIND")
+                                .font(.system(size: 8, weight: .heavy, design: .monospaced))
+                                .foregroundStyle(.purple.opacity(0.6))
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 7, weight: .heavy))
+                                .foregroundStyle(.purple.opacity(0.4))
+                        }
+                    }
+                    .padding(.trailing, 20)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .opacity(animateIn ? 1 : 0)
+        .offset(x: animateIn ? 0 : 30)
+        .sensoryFeedback(.impact(weight: .medium), trigger: activeMode == .dualFind)
+    }
 }
 
 nonisolated enum ActiveAppMode: String, Sendable {
@@ -557,4 +616,5 @@ nonisolated enum ActiveAppMode: String, Sendable {
     case splitTest
     case vault
     case ipScoreTest
+    case dualFind
 }

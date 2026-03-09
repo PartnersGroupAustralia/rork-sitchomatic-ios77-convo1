@@ -52,6 +52,8 @@ struct DualModeCarCheckAppApp: App {
                             .preferredColorScheme(.dark)
                         case .ipScoreTest:
                             IPScoreTestView()
+                        case .dualFind:
+                            DualFindContainerView()
                         }
                     }
                     .transition(.asymmetric(
